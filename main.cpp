@@ -4,32 +4,11 @@
 #include <opencv2/core.hpp>
 #include "opencv2/core/cuda.hpp"
 
-//using namespace std;
-using namespace cv::cuda;
+using namespace std;
+using namespace cv;
 
 int main(int argc, char *argv[]) {
-//    int dev = cv::cuda::getDevice();
-    DeviceInfo devInfo = DeviceInfo();
-//    cout << devInfo.name();
-//    cv::cuda::printCudaDeviceInfo(dev);
+    cout << "Garbage";
+    cuda::printCudaDeviceInfo(cuda::getDevice());
     return 0;
-//    try
-//    {
-//        cv::Mat src_host = cv::imread("file.png", CV_LOAD_IMAGE_GRAYSCALE);
-//        cv::gpu::GpuMat dst, src;
-//        src.upload(src_host);
-//
-//        cv::gpu::threshold(src, dst, 128.0, 255.0, CV_THRESH_BINARY);
-//
-//        cv::Mat result_host;
-//        dst.download(result_host);
-//
-//        cv::imshow("Result", result_host);
-//        cv::waitKey();
-//    }
-//    catch(const cv::Exception& ex)
-//    {
-//        std::cout << "Error: " << ex.what() << std::endl;
-//    }
-//    return 0;
 }

@@ -1,5 +1,7 @@
-FROM nvidia/cuda:11.3.0-devel-ubuntu18.04
-ARG VERSION=4.5.2
+ARG CUDA="11.2.2"
+ARG UBUNTU="18.04"
+FROM nvidia/cuda:${CUDA}-runtime-ubuntu${UBUNTU}
+ARG OPENCV="4.5.2"
 
 # Update and install dependencies
 RUN apt update
@@ -33,7 +35,6 @@ RUN apt install -y build-essential \
     libswscale-dev \
     libeigen3-dev \
     libtbb-dev \
-    libgtk2.0-dev \
     python-dev \
     python-numpy \
     python3-dev \
@@ -41,15 +42,21 @@ RUN apt install -y build-essential \
 
 # Compile and install OpenCV
 WORKDIR /opt
-RUN wget https://github.com/opencv/opencv/archive/refs/tags/$VERSION.zip && unzip $VERSION.zip && rm $VERSION.zip
-RUN wget https://github.com/opencv/opencv_contrib/archive/$VERSION.zip && unzip $VERSION.zip && rm $VERSION.zip
-RUN mkdir opencv-$VERSION/build && \
-    cd opencv-$VERSION/build && \
-    cmake -DOPENCV_EXTRA_MODULES_PATH=/opt/opencv_contrib-$VERSION/modules \
+RUN wget https://github.com/opencv/opencv/archive/refs/tags/${OPENCV}.zip && unzip ${OPENCV}.zip && rm ${OPENCV}.zip
+RUN wget https://github.com/opencv/opencv_contrib/archive/${OPENCV}.zip && unzip ${OPENCV}.zip && rm ${OPENCV}.zip
+RUN mkdir opencv-${OPENCV}/build && \
+    cd opencv-${OPENCV}/build && \
+    cmake -DOPENCV_EXTRA_MODULES_PATH=/opt/opencv_contrib-${OPENCV}/modules \
         -DWITH_CUDA=ON \
-        -D ENABLE_FAST_MATH=1 \
-        -D CUDA_FAST_MATH=1 \
-        -D WITH_CUBLAS=1 \
+        -DENABLE_FAST_MATH=ON \
+        -DCUDA_FAST_MATH=ON \
+        -DWITH_CUBLAS=ON \
+        -DWITH_GSTREAMER=OFF \
+        -DWITH_V4L=OFF \
+        -DWITH_GTK=OFF \
+        -DBUILD_TESTS=OFF \
+        -DBUILD_PERF_TESTS=OFF \
+        -DBUILD_EXAMPLES=OFF \
         -DCMAKE_BUILD_TYPE=RELEASE \
         -DCMAKE_INSTALL_PREFIX=/usr/local \
         .. && \
@@ -65,6 +72,9 @@ WORKDIR /app
 COPY main.cpp .
 COPY CMakeLists.txt .
 RUN cmake . && make -j "$(nproc)"
-RUN mv OpenCV_GPU bin/
+RUN chmod +x OpenCV_GPU
 
-CMD ["./bin/OpenCV_GPU"]
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES all
+ENTRYPOINT ["bash"]
+CMD ["ls -l"]
