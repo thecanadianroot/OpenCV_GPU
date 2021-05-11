@@ -1,6 +1,6 @@
 ARG CUDA="11.2.2"
 ARG UBUNTU="18.04"
-FROM nvidia/cuda:${CUDA}-runtime-ubuntu${UBUNTU}
+FROM nvidia/cuda:${CUDA}-devel-ubuntu${UBUNTU}
 ARG OPENCV="4.5.2"
 
 # Update and install dependencies
@@ -64,7 +64,9 @@ RUN mkdir opencv-${OPENCV}/build && \
     make install && \
     ldconfig
 # Clean
-RUN rm -rf /opt/*
+RUN rm -rf opencv-${OPENCV}/build
+#RUN export PATH=/usr/local/cuda/bin/lib64:$PATH
+#RUN export CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda
 
 # Actually compile the application
 RUN mkdir -p /app
@@ -76,5 +78,5 @@ RUN chmod +x OpenCV_GPU
 
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES all
-ENTRYPOINT ["bash"]
-CMD ["ls -l"]
+# ENTRYPOINT ["bash"]
+CMD ["./OpenCV_GPU"]

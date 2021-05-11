@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 project(OpenCV_GPU)
 
-set(CMAKE_CXX_STANDARD 14)
-
-SET("OpenCV_DIR" "/usr/share/OpenCV")
+set(CMAKE_CXX_STANDARD 11)
+set(CUDA_TOOLKIT_ROOT_DIR "/usr/local/cuda")
+set(CUDA_NVCC_EXECUTABLE "/usr/local/cuda/bin/nvcc")
+set(CUDA_CUDART_LIBRARY "/usr/local/cuda/lib64/libcudart.so")
+find_package(CUDA REQUIRED)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRS})
+#set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_30,code=sm_30)
+#set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-std=c++11)
+
 add_executable(OpenCV_GPU main.cpp)
 target_link_libraries(OpenCV_GPU ${OpenCV_LIBS})
